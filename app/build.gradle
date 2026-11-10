@@ -1,0 +1,16 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.legeza.cryptopro'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.legeza.cryptopro'
+        minSdk 23
+        targetSdk 35
+        versionCode 7
+        versionName '7.0'
+    }
+}
