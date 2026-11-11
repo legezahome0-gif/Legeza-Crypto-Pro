@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="sw"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220"><meta name="application-name" content="Legeza Crypto Pro"><title>Legeza Crypto Pro</title><link rel="icon" type="image/png" href="logo.png">
+<script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{--bg:#0b1220;--p:#121d2e;--p2:#19283d;--line:#2a3a51;--txt:#eaf0f8;--muted:#9aabc1;--green:#20c997;--red:#ff667d;--yellow:#f5c451;--blue:#69aaff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(150deg,#09111e,#111d30);color:var(--txt);font:15px system-ui,Segoe UI,Roboto,sans-serif}
+header,main{max-width:1000px;margin:auto}header{padding:18px 16px 12px;text-align:center}header .brand-logo{display:block;width:min(100%,230px);height:auto;max-height:230px;object-fit:contain;margin:0 auto 12px;border-radius:16px}h1{font-size:23px;margin:0 0 5px}.sub,.muted{color:var(--muted);font-size:12px}
+main{padding:0 13px 30px}.panel{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:15px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}select,button{width:100%;background:var(--p2);color:var(--txt);border:1px solid var(--line);padding:12px;border-radius:10px;font-size:14px}
+button{background:#2867bd;border:0;font-weight:750;margin-top:10px}button:disabled{opacity:.5}
+.price{font-size:29px;font-weight:850}.signal{font-size:27px;font-weight:900;margin:5px 0}.buy,.long{color:var(--green)}.sell,.short{color:var(--red)}.wait,.hold{color:var(--yellow)}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric{background:var(--p2);border-radius:11px;padding:11px;min-width:0}.metric span{display:block;color:var(--muted);font-size:11px}.metric b{display:block;font-size:16px;margin-top:4px;overflow-wrap:anywhere}
+.levels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.level{background:var(--p2);border-radius:10px;padding:11px}.level span{font-size:11px;color:var(--muted);display:block}.level b{font-size:16px}
+.bar{height:8px;background:#29394f;border-radius:20px;overflow:hidden;margin:9px 0}.bar i{display:block;height:100%;background:var(--blue);width:0}
+table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:9px 5px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-weight:500}
+ul{padding-left:19px;margin-bottom:0}li{margin:7px 0;color:#cbd6e5}.warn{color:var(--yellow);font-size:12px;line-height:1.5}.tag{display:inline-block;border-radius:20px;padding:4px 8px;background:#26364c;color:var(--muted);font-size:11px}
+#candleChart{width:100%;height:390px;background:#0d1726;border-radius:9px;overflow:hidden}.countdown-box{display:flex;flex-direction:column;gap:3px;background:#19283d;border:1px solid #2a3a51;border-radius:10px;padding:10px 12px;margin:10px 0}.countdown-box b{font-size:25px;letter-spacing:1px;color:#f5c451;font-variant-numeric:tabular-nums}.chart-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:8px 0}.chart-legend span{white-space:nowrap}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+@media(min-width:700px){.fields{grid-template-columns:repeat(4,minmax(0,1fr))}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.levels{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+.draw-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.draw-tools label{display:flex;align-items:center;gap:7px;background:var(--p2);padding:9px;border-radius:9px;margin:0;color:var(--txt)}.draw-tools input{accent-color:#69aaff}.draw-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.draw-actions button{margin-top:0}.draw-actions select{min-width:0}
+.announcement-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.announcement-card{background:var(--p2);border:1px solid var(--line);border-radius:11px;padding:11px;margin:8px 0}
+.announcement-card a{color:#dceaff;text-decoration:none;font-weight:750;line-height:1.4;display:block}
+.announcement-card a:hover{text-decoration:underline}
+.announcement-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.announcement-meta span{font-size:10px;color:var(--muted);background:#223249;border-radius:15px;padding:4px 7px}
+.announcement-meta .newflag{background:#164d3d;color:#a8f0d2}
+.announcement-meta .dangerflag{background:#522638;color:#ffc0cd}
+.announcement-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.announcement-head h3{font-size:15px;margin:0}
+.announcement-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.announcement-actions button{margin-top:0}
+#listingStatus{line-height:1.5}
+#smartAnalysis{border:2px solid #20c997;scroll-margin-top:12px;background:linear-gradient(145deg,#122b2b,#121d2e)}
+#smartAnalysis>b{display:block;color:#20c997;font-size:17px;margin-bottom:5px}
+@media(min-width:700px){.announcement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style></head><body>
+<header><img class="brand-logo" src="logo.png" alt="Legeza Crypto Pro logo"><h1>LEGEZA CRYPTO PRO</h1><div class="sub">Binance Spot + USDⓈ-M Futures • Uchambuzi wa soko • Zana ya elimu</div></header>
+<main>
+
+<section class="panel" id="listingMonitor">
+ <div class="announcement-head"><div><b>BINANCE LISTING & DELISTING MONITOR</b><div class="muted">Matangazo rasmi ya Binance • New listings na delistings</div></div><span class="tag" id="listingUpdated">Haijakaguliwa</span></div>
+ <div class="announcement-actions" style="margin-top:12px">
+  <button id="refreshListings">ANGALIA MATANGAZO SASA</button>
+  <button id="notifyListings" style="background:#30445f">WASHA TAARIFA</button>
+ </div>
+ <p class="muted" id="listingStatus">Bonyeza “Angalia matangazo sasa” kupata orodha mpya na matangazo ya kuondolewa.</p>
+ <p class="muted">Vyanzo rasmi: <a style="color:#9cc8ff" href="https://www.binance.com/en/support/announcement/new-cryptocurrency-listing" target="_blank" rel="noopener">New Cryptocurrency Listing</a> · <a style="color:#9cc8ff" href="https://www.binance.com/en/support/announcement/delisting" target="_blank" rel="noopener">Delisting</a></p>
+ <div class="announcement-grid">
+  <div>
+   <div class="announcement-head"><h3>🟢 TOKEN / CONTRACTS MPYA</h3><span class="tag" id="newCount">0</span></div>
+   <div id="newListings"><p class="muted">Bado hakuna data.</p></div>
+  </div>
+  <div>
+   <div class="announcement-head"><h3>🔴 ZINAZOONDOLEWA</h3><span class="tag" id="delistCount">0</span></div>
+   <div id="delistings"><p class="muted">Bado hakuna data.</p></div>
+  </div>
+ </div>
+ <p class="warn">Muhimu: Tangazo la kuondoa trading pair si lazima limaanishe token nzima imeondolewa. Fungua tangazo rasmi kuthibitisha bidhaa, soko na tarehe. Orodha hujisasisha kila dakika 5 wakati app iko wazi; si push notification app ikiwa imefungwa.</p>
+</section>
+
+<section class="panel">
+ <div class="fields">
+  <div><label for="market">MARKET MODE</label><select id="market"><option value="spot">Binance Spot</option><option value="futures">Binance Futures (USDT-M)</option></select></div>
+  <div><label for="symbol">TRADING PAIR (andika token yoyote ya Binance)</label><input id="symbol" list="popularSymbols" value="BTCUSDT" autocapitalize="characters" placeholder="Mfano: SOLUSDT"><datalist id="popularSymbols"><option value="BTCUSDT"><option value="ETHUSDT"><option value="BNBUSDT"><option value="SOLUSDT"><option value="XRPUSDT"><option value="DOGEUSDT"><option value="ADAUSDT"><option value="LINKUSDT"><option value="AVAXUSDT"><option value="TRXUSDT"><option value="TONUSDT"><option value="SUIUSDT"><option value="PEPEUSDT"><option value="LTCUSDT"><option value="BCHUSDT"></datalist></div>
+  <div><label for="tf">MAIN TIMEFRAME</label><select id="tf"><option value="1m">1m</option><option value="3m">3m</option><option value="5m">5m</option><option value="15m" selected>15m</option><option value="30m">30m</option><option value="1h">1H</option><option value="2h">2H</option><option value="4h">4H</option><option value="6h">6H</option><option value="12h">12H</option><option value="1d">1D</option></select></div>
+  <div><label for="limit">CANDLES</label><select id="limit"><option value="250">250</option><option value="300" selected>300</option><option value="500">500</option></select></div>
+ </div>
+ <button id="run">CHAMBUA SOKO SASA</button><p id="status" class="muted">Tayari. Chagua Spot au Futures kisha chambua.</p>
+<button id="jumpSmart" type="button" style="background:#176b55" onclick="document.getElementById('smartAnalysis').scrollIntoView({behavior:'smooth',block:'start'})">FUNGUA SMART MARKET ANALYSIS ↓</button>
+</section>
+<section class="panel">
+ <div class="muted">LAST CLOSED CANDLE PRICE</div><div class="price" id="price">—</div><div class="muted" id="marketLabel">BTCUSDT • Spot</div>
+</section>
+<section class="panel">
+ <div class="muted">TRADE BIAS</div><div class="signal wait" id="signal">WAIT</div><div id="signalDesc" class="muted">Subiri data ipakiwe.</div>
+ <div class="bar"><i id="confBar"></i></div><div class="muted">Ulinganifu wa vigezo: <b id="conf">—</b> <span class="tag">si probability ya profit</span></div><div class="muted" id="quality" style="margin-top:8px">Ubora wa setup: —</div>
+</section>
+<section class="panel"><b>ENTRY, STOP LOSS & TAKE PROFIT</b><p class="muted" id="directionNote">Viwango vya mfano vinavyotokana na ATR.</p>
+ <div class="levels">
+  <div class="level"><span>ENTRY</span><b id="entry">—</b></div>
+  <div class="level"><span>STOP LOSS</span><b id="sl">—</b></div>
+  <div class="level"><span>TAKE PROFIT 1 (1R)</span><b id="tp1">—</b></div>
+  <div class="level"><span>TAKE PROFIT 2 (2R)</span><b id="tp2">—</b></div>
+  <div class="level"><span>TAKE PROFIT 3 (3R)</span><b id="tp3">—</b></div>
+  <div class="level"><span>RISK DISTANCE</span><b id="risk">—</b></div>
+  <div class="level"><span>RISK / REWARD</span><b>1 : 1 / 2 / 3</b></div>
+  <div class="level"><span>ATR MULTIPLIER</span><b>1.5 × ATR</b></div>
+ </div>
+ <p class="warn">Entry ni close ya candle iliyofungwa, si order iliyowekwa. SL/TP ni makadirio ya kiufundi; spread, slippage, fees na leverage vinaweza kubadilisha matokeo.</p>
+</section>
+<section class="panel"><b>TECHNICAL INDICATORS</b><div class="metrics" style="margin-top:10px">
+ <div class="metric"><span>RSI (14)</span><b id="rsi">—</b><span id="rsiHint">—</span></div>
+ <div class="metric"><span>MACD / Signal</span><b id="macd">—</b><span id="macdHint">—</span></div>
+ <div class="metric"><span>EMA 20 / 50</span><b id="ema">—</b><span id="emaHint">—</span></div>
+ <div class="metric"><span>EMA 200</span><b id="ema200">—</b><span id="ema200Hint">—</span></div>
+ <div class="metric"><span>Bollinger Lower / Upper</span><b id="bb">—</b><span id="bbHint">—</span></div>
+ <div class="metric"><span>ATR (14)</span><b id="atr">—</b><span>Volatility</span></div>
+ <div class="metric"><span>Volume vs avg 20</span><b id="volume">—</b><span id="volHint">—</span></div>
+ <div class="metric"><span>Trend</span><b id="trend">—</b><span>EMA 20/50/200</span></div><div class="metric"><span>ATR / Bei</span><b id="atrPct">—</b><span id="riskClass">Volatility ya token</span></div>
+ </div></section>
+<section class="panel"><b>MULTI-TIMEFRAME CONFIRMATION</b><p class="muted">Ulinganisho wa 15m, 1H, 4H na 1D. Signal ya muda mmoja si uthibitisho wa kutosha.</p>
+<table><thead><tr><th>TF</th><th>Trend</th><th>RSI</th><th>ATR / Bei</th><th>Risk</th><th>Signal</th></tr></thead><tbody id="mtf"><tr><td colspan="6">Bado hakuna data.</td></tr></tbody></table><p class="muted">Risk ni volatility inayopimwa kwa ATR/bei: chini ya 1% LOW; 1–2.49% MEDIUM; 2.5–4.99% HIGH; 5% au zaidi VERY HIGH. Hiki si kipimo kamili cha hatari ya trade.</p></section>
+<section class="panel" id="smartAnalysis"><b>SMART MARKET ANALYSIS</b><p class="muted">Uchambuzi wa kanuni za kiufundi kutoka Binance public data; si AI ya mazungumzo wala utabiri wa uhakika.</p>
+ <div class="metrics" style="margin-top:10px">
+  <div class="metric"><span>MARKET TREND</span><b id="smartTrend">—</b><span id="smartTrendNote">—</span></div>
+  <div class="metric"><span>MOMENTUM</span><b id="smartMomentum">—</b><span id="smartMomentumNote">—</span></div>
+  <div class="metric"><span>SUPPORT (karibu)</span><b id="smartSupport">—</b><span>Pivot low ya karibuni</span></div>
+  <div class="metric"><span>RESISTANCE (karibu)</span><b id="smartResistance">—</b><span>Pivot high ya karibuni</span></div>
+ </div>
+ <p id="smartSummary" class="muted" style="margin-top:12px">Bonyeza CHAMBUA SOKO SASA ili kupata muhtasari.</p>
+ <p class="warn">Levels za support/resistance ni pivots za candles zilizopita, si viwango vinavyohakikisha bei itageuka. Hakiki chart na usimamizi wa risk kabla ya uamuzi.</p>
+</section>
+<section class="panel"><b>REASONS / MARKET NOTES</b><ul id="reasons"><li>Bonyeza CHAMBUA SOKO SASA.</li></ul></section>
+<section class="panel"><b>CANDLESTICK CHART</b><p class="muted">Mishumaa ya bei ya Binance: kijani = candle imefunga juu ya open; nyekundu = imefunga chini. Gusa chart kuvuka bei na muda; zoom kwa vidole.</p><div class="chart-legend"><span><i class="dot" style="background:#26a69a"></i>Candles bullish</span><span><i class="dot" style="background:#ef5350"></i>Candles bearish</span><span><i class="dot" style="background:#69aaff"></i>EMA 20</span><span><i class="dot" style="background:#f5c451"></i>EMA 50</span><span><i class="dot" style="background:#b58cff"></i>EMA 200</span><span><i class="dot" style="background:#7e9bb8"></i>Bollinger Bands</span></div><div class="draw-tools">
+ <label><input type="checkbox" id="showAutoTrend" checked> Automatic Trend Lines</label>
+ <label><input type="checkbox" id="showSR" checked> Support / Resistance</label>
+ <label><input type="checkbox" id="showFib" checked> Fibonacci</label>
+ <label><input type="checkbox" id="showManual" checked> Manual Lines</label>
+</div>
+<div class="draw-actions">
+ <select id="drawMode"><option value="trend">Chora Trend Line (gusa point 2)</option><option value="horizontal">Chora Support/Resistance (gusa mara 1)</option></select>
+ <button id="startDraw" style="margin:0">ANZA KUCHORA</button>
+ <button id="undoDraw" style="background:#43536a;margin:0">UNDO MSTARI</button>
+ <button id="clearDraw" style="background:#6b3442;margin:0">FUTA MISTARI YANGU</button>
+</div>
+<p id="drawHelp" class="muted">Automatic: mistari hutokana na swing highs/lows za candles. Manual: bonyeza “Anza kuchora”, kisha gusa chati kulingana na aina uliyochagua.</p>
+<div class="countdown-box"><span class="muted">MUDA ULIOBAKI KABLA CANDLE YA SASA HAJAISHA</span><b id="candleCountdown">—</b><span id="candleCountdownHint" class="muted">Subiri data ya Binance ipakiwe.</span></div><div id="candleChart"></div><p id="chartStatus" class="muted">Candlestick chart itajitokeza baada ya data kupakuliwa.</p></section>
+<section class="panel"><b>JINSI YA KUTUMIA</b><ul>
+<li><b>Spot:</b> BUY inaonyesha setup ya kununua; bearish signal huonyesha EXIT / AVOID. Spot haina short selling ya kawaida.</li>
+<li><b>Futures:</b> LONG inaonyesha bias ya kupanda; SHORT inaonyesha bias ya kushuka.</li>
+<li><b>WAIT:</b> indicators zinakinzana au hazina nguvu ya kutosha.</li>
+<li>Subiri candle ifungwe; linganisha 1H/4H/1D; hakikisha support/resistance na volume kabla ya kuamua.</li>
+<li>Fanya paper trading na uandike matokeo kabla ya kutumia pesa halisi.</li></ul>
+<p class="warn">Tahadhari: Hakuna indicator inayotoa usahihi wa 100% au kuhakikisha faida. Futures na leverage vinaweza kusababisha upotevu mkubwa. App hii ni ya elimu/uchambuzi tu; haiweki order wala haihifadhi API keys.</p></section>
+<footer class="muted" style="text-align:center;padding:10px">PRO Crypto Analyzer • Candlestick + Binance public market data + Listing/Delisting Monitor • v7.0 Candle Countdown + Multi-Timeframe Risk</footer>
+</main>
+<script>
+const $=x=>document.getElementById(x), fmt=n=>Number.isFinite(n)?n.toLocaleString('en-US',{maximumFractionDigits:n>100?2:6}):'—';
+const avg=a=>a.reduce((s,v)=>s+v,0)/a.length;
+function EMA(a,p){let o=Array(a.length).fill(null);if(a.length<p)return o;let v=avg(a.slice(0,p)),k=2/(p+1);o[p-1]=v;for(let i=p;i<a.length;i++){v=a[i]*k+v*(1-k);o[i]=v}return o}
+function SMA(a,p){return a.map((_,i)=>i<p-1?null:avg(a.slice(i-p+1,i+1)))}
+function RSI(a,p=14){let o=Array(a.length).fill(null);if(a.length<=p)return o;let g=0,l=0;for(let i=1;i<=p;i++){let d=a[i]-a[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}g/=p;l/=p;o[p]=l===0?100:100-100/(1+g/l);for(let i=p+1;i<a.length;i++){let d=a[i]-a[i-1];g=(g*(p-1)+Math.max(d,0))/p;l=(l*(p-1)+Math.max(-d,0))/p;o[i]=l===0?100:100-100/(1+g/l)}return o}
+function calc(k){
+ const c=k.map(x=>x.c), e20=EMA(c,20),e50=EMA(c,50),e200=EMA(c,200),rv=RSI(c),m12=EMA(c,12),m26=EMA(c,26),mac=m12.map((v,i)=>v==null||m26[i]==null?null:v-m26[i]);
+ const macVals=mac.map(v=>v??0),ms=EMA(macVals,9),i=c.length-2; // last fully closed candle
+ const tr=k.map((x,j)=>j===0?x.h-x.l:Math.max(x.h-x.l,Math.abs(x.h-k[j-1].c),Math.abs(x.l-k[j-1].c)));
+ const atr=avg(tr.slice(Math.max(0,i-13),i+1)),last=c[i],mid=avg(c.slice(i-19,i+1)),sd=Math.sqrt(avg(c.slice(i-19,i+1).map(v=>(v-mid)**2))),lo=mid-2*sd,hi=mid+2*sd;
+ const vavg=avg(k.slice(i-19,i+1).map(x=>x.v)),vr=k[i].v/(vavg||1);
+ let score=0,notes=[];
+ if(e20[i]>e50[i]){score++;notes.push('EMA 20 iko juu ya EMA 50: short/medium trend inaelekea juu.')}else{score--;notes.push('EMA 20 iko chini ya EMA 50: short/medium trend inaelekea chini.')}
+ if(last>e200[i]){score++;notes.push('Bei iko juu ya EMA 200: long-term bias bullish.')}else{score--;notes.push('Bei iko chini ya EMA 200: long-term bias bearish.')}
+ if(mac[i]>ms[i]){score++;notes.push('MACD iko juu ya signal line: momentum chanya.')}else{score--;notes.push('MACD iko chini ya signal line: momentum hasi.')}
+ if(rv[i]>50&&rv[i]<70){score++;notes.push('RSI iko kati ya 50 na 70: nguvu ya wanunuzi bila overbought.')}else if(rv[i]<50&&rv[i]>30){score--;notes.push('RSI iko kati ya 30 na 50: nguvu ya wauzaji.')}else if(rv[i]>=70)notes.push('RSI ni 70 au zaidi: overbought; epuka kufuatilia bei kwa haraka.');else notes.push('RSI ni 30 au chini: oversold; subiri uthibitisho wa reversal.');
+ if(vr>1.2)notes.push('Volume ni zaidi ya wastani wa siku za karibuni (20 candles): activity imeongezeka.');else notes.push('Volume haijazidi 1.2× wastani wa candles 20.');
+ if(last>hi)notes.push('Bei iko juu ya Bollinger upper band; inaweza kuwa extended.');else if(last<lo)notes.push('Bei iko chini ya Bollinger lower band; angalia confirmation ya reversal.');else notes.push('Bei iko ndani ya Bollinger Bands.');
+ const bias=score>=2?'UP':score<=-2?'DOWN':'NEUTRAL';
+ const atrPct=atr/last*100;
+ const riskClass=atrPct>=5?'VERY HIGH':atrPct>=2.5?'HIGH':atrPct>=1?'MEDIUM':'LOW';
+ if(atrPct>=5)notes.push('Volatility ni kubwa sana kwa token hii ('+atrPct.toFixed(2)+'% ya bei); punguza risk au subiri.');
+ else if(atrPct>=2.5)notes.push('Volatility iko juu ('+atrPct.toFixed(2)+'%); tumia position ndogo na SL inayolingana.');
+ else notes.push('Volatility ya sasa: '+atrPct.toFixed(2)+'% ya bei.');
+ return {last,rsi:rv[i],e20:e20[i],e50:e50[i],e200:e200[i],macd:mac[i],ms:ms[i],atr,atrPct,riskClass,lo,hi,vr,vol:k[i].v,bias,score,notes,closes:c.slice(0,i+1)};
+}
+async function getKlines(symbol,tf,limit,market){
+ const host=market==='futures'?'https://fapi.binance.com/fapi/v1/klines':'https://api.binance.com/api/v3/klines';
+ const res=await fetch(`${host}?symbol=${symbol}&interval=${tf}&limit=${limit}`);
+ if(!res.ok)throw new Error('Binance API imerudisha HTTP '+res.status+'. Angalia internet au jaribu tena.');
+ const raw=await res.json();if(!Array.isArray(raw)||raw.length<210)throw new Error('Data haitoshi kwa EMA 200.');return raw.map(x=>({t:+x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5],closeTime:+x[6]}));
+}
+let candleChart=null,candleSeries=null,ema20Series=null,ema50Series=null,ema200Series=null,bbUpperSeries=null,bbLowerSeries=null,resizeObserver=null,latestKlines=[],candleCountdownTimer=null,lastAutoRefreshClose=0,autoLineSeries=[],srPriceLines=[],manualLines=[],manualSeries=[],drawActive=false,drawPoints=[];
+function updateCandleCountdown(){
+ const out=$('candleCountdown'),hint=$('candleCountdownHint');
+ if(!out||!hint||!latestKlines.length){if(out)out.textContent='—';return;}
+ const current=latestKlines[latestKlines.length-1],remaining=current.closeTime-Date.now();
+ if(remaining>0){const total=Math.ceil(remaining/1000),h=Math.floor(total/3600),m=Math.floor((total%3600)/60),sec=total%60;out.textContent=[h,m,sec].map(v=>String(v).padStart(2,'0')).join(':');hint.textContent='Candle ya '+$('tf').value+' inafungwa saa '+new Date(current.closeTime).toLocaleTimeString();}
+ else{out.textContent='00:00:00';hint.textContent='Candle imefika mwisho. App inasasisha data ya candle mpya...';if(Date.now()>current.closeTime+1500&&lastAutoRefreshClose!==current.closeTime){lastAutoRefreshClose=current.closeTime;if(!$('run').disabled)run();}}
+}
+function initCandleChart(){
+ const el=$('candleChart');
+ if(!window.LightweightCharts){$('chartStatus').textContent='Chart library haijapakia. Hakikisha internet ipo, kisha bonyeza CHAMBUA tena.';return false;}
+ if(candleChart)return true;
+ candleChart=LightweightCharts.createChart(el,{width:el.clientWidth,height:390,layout:{background:{type:'solid',color:'#0d1726'},textColor:'#9aabc1'},grid:{vertLines:{color:'#26364b'},horzLines:{color:'#26364b'}},rightPriceScale:{borderColor:'#2a3a51'},timeScale:{borderColor:'#2a3a51',timeVisible:true,secondsVisible:false},crosshair:{mode:1},handleScroll:{mouseWheel:true,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:true},handleScale:{mouseWheel:true,pinch:true}});
+ candleSeries=candleChart.addSeries(LightweightCharts.CandlestickSeries,{upColor:'#26a69a',downColor:'#ef5350',borderVisible:false,wickUpColor:'#26a69a',wickDownColor:'#ef5350'});
+ ema20Series=candleChart.addSeries(LightweightCharts.LineSeries,{color:'#69aaff',lineWidth:2,title:'EMA20',lastValueVisible:true,priceLineVisible:false});
+ ema50Series=candleChart.addSeries(LightweightCharts.LineSeries,{color:'#f5c451',lineWidth:2,title:'EMA50',lastValueVisible:true,priceLineVisible:false});
+ ema200Series=candleChart.addSeries(LightweightCharts.LineSeries,{color:'#b58cff',lineWidth:2,title:'EMA200',lastValueVisible:true,priceLineVisible:false});
+ bbUpperSeries=candleChart.addSeries(LightweightCharts.LineSeries,{color:'#7e9bb8',lineWidth:1,lineStyle:2,title:'BB Upper',lastValueVisible:false,priceLineVisible:false});
+ bbLowerSeries=candleChart.addSeries(LightweightCharts.LineSeries,{color:'#7e9bb8',lineWidth:1,lineStyle:2,title:'BB Lower',lastValueVisible:false,priceLineVisible:false});
+ candleChart.subscribeClick(param=>handleChartClick(param));
+ if(!candleCountdownTimer)candleCountdownTimer=setInterval(updateCandleCountdown,1000);
+ const resize=()=>{if(candleChart)candleChart.applyOptions({width:el.clientWidth});};
+ if(window.ResizeObserver){resizeObserver=new ResizeObserver(resize);resizeObserver.observe(el);}else{window.addEventListener('resize',resize);}
+ return true;
+}
+function drawCandles(k){
+ if(!initCandleChart())return;
+ const candles=k.map(x=>({time:Math.floor(x.t/1000),open:x.o,high:x.h,low:x.l,close:x.c}));
+ candleSeries.setData(candles);
+ const closes=k.map(x=>x.c),e20=EMA(closes,20),e50=EMA(closes,50),e200=EMA(closes,200);
+ const line=(values)=>values.map((v,i)=>v==null?null:{time:Math.floor(k[i].t/1000),value:v}).filter(Boolean);
+ ema20Series.setData(line(e20));ema50Series.setData(line(e50));ema200Series.setData(line(e200));
+ const upper=[],lower=[];
+ for(let i=19;i<k.length;i++){const a=closes.slice(i-19,i+1),m=avg(a),sd=Math.sqrt(avg(a.map(v=>(v-m)**2))),time=Math.floor(k[i].t/1000);upper.push({time,value:m+2*sd});lower.push({time,value:m-2*sd});}
+ bbUpperSeries.setData(upper);bbLowerSeries.setData(lower);
+ latestKlines=k;updateCandleCountdown();drawAutomaticLevels(k);drawManualLines();
+ candleChart.timeScale().fitContent();$('chartStatus').textContent='Candlestick '+$('symbol').value+' • '+$('tf').value+' • Binance '+($('market').value==='spot'?'Spot':'Futures')+' • '+k.length+' candles';
+}
+function clearAutoDrawings(){autoLineSeries.forEach(x=>{try{candleChart.removeSeries(x)}catch(e){}});autoLineSeries=[];srPriceLines.forEach(x=>{try{candleSeries.removePriceLine(x)}catch(e){}});srPriceLines=[];}
+function addChartLine(points,color,title,width=2,style=0){if(points.length<2)return;const ser=candleChart.addSeries(LightweightCharts.LineSeries,{color,lineWidth:width,lineStyle:style,title,lastValueVisible:false,priceLineVisible:false,crosshairMarkerVisible:false});ser.setData(points);autoLineSeries.push(ser);}
+function findPivots(k,kind){const out=[];for(let i=3;i<k.length-3;i++){let ok=true;for(let j=i-3;j<=i+3;j++){if(j===i)continue;if(kind==='low' ? k[j].l<=k[i].l : k[j].h>=k[i].h){ok=false;break;}}if(ok)out.push({i,time:Math.floor(k[i].t/1000),price:kind==='low'?k[i].l:k[i].h});}return out;}
+function drawAutomaticLevels(k){if(!candleChart||!candleSeries)return;clearAutoDrawings();const enabled=id=>$(id).checked;const start=Math.max(0,k.length-150),slice=k.slice(start),lows=findPivots(slice,'low').map(p=>({...p,i:p.i+start})),highs=findPivots(slice,'high').map(p=>({...p,i:p.i+start}));
+ if(enabled('showAutoTrend')){let up=lows.slice(-8),down=highs.slice(-8);if(up.length>=2){let a=up[up.length-2],b=up[up.length-1];if(b.price>a.price)addChartLine([{time:a.time,value:a.price},{time:b.time,value:b.price}], '#20c997','Auto Uptrend',3);}if(down.length>=2){let a=down[down.length-2],b=down[down.length-1];if(b.price<a.price)addChartLine([{time:a.time,value:a.price},{time:b.time,value:b.price}], '#ff667d','Auto Downtrend',3);}}
+ if(enabled('showSR')){const close=k[k.length-2].c,near=(arr)=>arr.filter(p=>Math.abs(p.price-close)/close<.06).sort((a,b)=>Math.abs(a.price-close)-Math.abs(b.price-close)).slice(0,3);const supports=near(lows).filter(p=>p.price<close),resists=near(highs).filter(p=>p.price>close);if(supports.length){let p=supports[0];srPriceLines.push(candleSeries.createPriceLine({price:p.price,color:'#20c997',lineWidth:2,lineStyle:2,axisLabelVisible:true,title:'Support'}));}if(resists.length){let p=resists[0];srPriceLines.push(candleSeries.createPriceLine({price:p.price,color:'#ff667d',lineWidth:2,lineStyle:2,axisLabelVisible:true,title:'Resistance'}));}}
+ if(enabled('showFib')&&lows.length&&highs.length){let low=lows[lows.length-1],high=highs[highs.length-1];if(low.i<high.i){const diff=high.price-low.price;[.236,.382,.5,.618,.786].forEach((r,idx)=>{let v=high.price-diff*r;addChartLine([{time:low.time,value:v},{time:k[k.length-1].t/1000,value:v}],idx===2?'#f5c451':'#8b9bb0','Fib '+(r*100).toFixed(1)+'%',1,2);});}}
+}
+function drawManualLines(){manualSeries.forEach(x=>{try{candleChart.removeSeries(x)}catch(e){}});manualSeries=[];if(!$('showManual').checked)return;manualLines.forEach((ln,i)=>{const ser=candleChart.addSeries(LightweightCharts.LineSeries,{color:ln.kind==='horizontal'?'#f5c451':'#69aaff',lineWidth:2,lineStyle:ln.kind==='horizontal'?2:0,title:ln.kind==='horizontal'?'Manual S/R':'Manual Trend '+(i+1),lastValueVisible:false,priceLineVisible:false});ser.setData(ln.points);manualSeries.push(ser);});}
+function handleChartClick(param){if(!drawActive||!param||!param.point||!candleSeries)return;const price=candleSeries.coordinateToPrice(param.point.y),time=candleChart.timeScale().coordinateToTime(param.point.x);if(price==null||time==null)return;const mode=$('drawMode').value;if(mode==='horizontal'){manualLines.push({kind:'horizontal',points:[{time,value:price},{time:latestKlines[latestKlines.length-1].t/1000,value:price}]});drawManualLines();drawActive=false;$('startDraw').textContent='ANZA KUCHORA';$('drawHelp').textContent='Mstari wa usawa umeongezwa. Unaweza kuanza kuchora mwingine.';return;}drawPoints.push({time,value:price});$('drawHelp').textContent=drawPoints.length===1?'Sasa gusa sehemu ya pili ya trend line.':'Trend line imechorwa.';if(drawPoints.length===2){manualLines.push({kind:'trend',points:drawPoints.slice().sort((a,b)=>a.time-b.time)});drawPoints=[];drawManualLines();drawActive=false;$('startDraw').textContent='ANZA KUCHORA';}}
+function refreshDrawings(){if(latestKlines.length)drawAutomaticLevels(latestKlines);drawManualLines();}
+
+function renderSmartAnalysis(a,k,consensus,total){
+ const closed=k.slice(0,-1),recent=closed.slice(-150),lows=findPivots(recent,'low').map(x=>x.price),highs=findPivots(recent,'high').map(x=>x.price);
+ const supports=lows.filter(x=>x<a.last).sort((x,y)=>y-x),resists=highs.filter(x=>x>a.last).sort((x,y)=>x-y);
+ $('smartTrend').textContent=a.bias==='UP'?'BULLISH':a.bias==='DOWN'?'BEARISH':'SIDEWAYS / MIXED';
+ $('smartTrendNote').textContent='EMA20 '+(a.e20>a.e50?'juu':'chini')+' ya EMA50; bei '+(a.last>a.e200?'juu':'chini')+' ya EMA200';
+ $('smartMomentum').textContent=a.macd>a.ms?'POSITIVE':'NEGATIVE';
+ $('smartMomentumNote').textContent='RSI '+fmt(a.rsi)+' • MACD '+(a.macd>a.ms?'juu':'chini')+' ya signal';
+ $('smartSupport').textContent=supports.length?fmt(supports[0]):'Haijapatikana';
+ $('smartResistance').textContent=resists.length?fmt(resists[0]):'Haijapatikana';
+ let conclusion=a.bias==='UP'?'Mwelekeo wa sasa unaegemea kupanda':a.bias==='DOWN'?'Mwelekeo wa sasa unaegemea kushuka':'Viashiria havijakubaliana vya kutosha';
+ let risk=a.riskClass==='VERY HIGH'?'Volatility ni VERY HIGH; epuka leverage kubwa.':a.riskClass==='HIGH'?'Volatility iko HIGH; punguza ukubwa wa position.':'Volatility ni '+a.riskClass+' kwa kipimo cha ATR/bei.';
+ $('smartSummary').textContent=conclusion+'. Uthibitisho wa timeframes: '+consensus+'/'+total+'. '+risk+' '+(a.bias==='NEUTRAL'?'Kwa sasa WAIT ndiyo msimamo wa tahadhari.':'Usiingie bila kusubiri candle ifunge na kuthibitisha levels za entry/SL.');
+}
+function setSignal(a,market){let sig='WAIT',cls='wait',desc='Ushahidi wa token hii haujatosha au timeframes hazijakubaliana.';
+ if(a.bias==='UP'){sig=market==='spot'?'BUY':'LONG';cls=market==='spot'?'buy':'long';desc='Bias ya kupanda: subiri confirmation ya timeframe kubwa na risk plan.'}
+ if(a.bias==='DOWN'){sig=market==='spot'?'EXIT / AVOID':'SHORT';cls=market==='spot'?'sell':'short';desc=market==='spot'?'Bias ya kushuka: epuka kununua au tathmini exit. Spot haitoi short.':'Bias ya kushuka: subiri confirmation kabla ya short.'}
+ $('signal').textContent=sig;$('signal').className='signal '+cls;$('signalDesc').textContent=desc;
+}
+function render(a,market,tf,symbol,mtfAgreement){
+ $('price').textContent=fmt(a.last)+' USDT';$('marketLabel').textContent=symbol+' • '+(market==='spot'?'Binance Spot':'Binance USDⓈ-M Futures')+' • '+tf;
+ setSignal(a,market);let c=Math.round((Math.abs(a.score)/4)*100);$('conf').textContent=c+'%';$('confBar').style.width=c+'%';$('quality').textContent='Ubora wa setup: '+(a.bias==='NEUTRAL'?'HAITOSHI':(mtfAgreement>=3?'NZURI — timeframe zimekubaliana':mtfAgreement===2?'WASTANI — thibitisha zaidi':'DHAIFU — subiri'))+' • Mwelekeo '+mtfAgreement+'/4 timeframes';
+ $('rsi').textContent=fmt(a.rsi);$('rsiHint').textContent=a.rsi>=70?'Overbought':a.rsi<=30?'Oversold':'Neutral';$('macd').textContent=fmt(a.macd)+' / '+fmt(a.ms);$('macdHint').textContent=a.macd>a.ms?'Bullish momentum':'Bearish momentum';
+ $('ema').textContent=fmt(a.e20)+' / '+fmt(a.e50);$('emaHint').textContent=a.e20>a.e50?'EMA20 > EMA50':'EMA20 < EMA50';$('ema200').textContent=fmt(a.e200);$('ema200Hint').textContent=a.last>a.e200?'Price above EMA200':'Price below EMA200';
+ $('bb').textContent=fmt(a.lo)+' / '+fmt(a.hi);$('bbHint').textContent=a.last>a.hi?'Above upper band':a.last<a.lo?'Below lower band':'Inside bands';$('atr').textContent=fmt(a.atr);$('atrPct').textContent=fmt(a.atrPct)+'%';$('riskClass').textContent='Volatility: '+a.riskClass;$('volume').textContent=fmt(a.vol);$('volHint').textContent=fmt(a.vr)+'× avg 20';$('trend').textContent=a.bias;
+ let direction= a.bias==='UP'?1:(a.bias==='DOWN'&&market==='futures'?-1:0),entry=a.last,dist=a.atr*1.5;
+ $('directionNote').textContent=direction===0?(market==='spot'&&a.bias==='DOWN'?'EXIT / AVOID: Spot haitoi SHORT; viwango vya SHORT vimefichwa.':'WAIT: hakuna Entry/SL/TP inayopendekezwa mpaka signal iwe na mwelekeo.'):'Levels za mfano kwa '+(direction>0?(market==='spot'?'BUY':'LONG'):'SHORT')+'; ATR × 1.5.';
+ if(direction===0){['entry','sl','tp1','tp2','tp3','risk'].forEach(id=>$(id).textContent='—')}
+ else{$('entry').textContent=fmt(entry);$('sl').textContent=fmt(entry-direction*dist);$('tp1').textContent=fmt(entry+direction*dist);$('tp2').textContent=fmt(entry+direction*dist*2);$('tp3').textContent=fmt(entry+direction*dist*3);$('risk').textContent=fmt(dist)+' USDT ('+fmt(dist/entry*100)+'%)'}
+ $('reasons').innerHTML=a.notes.map(x=>'<li>'+x+'</li>').join('');
+}
+async function run(){
+ let market=$('market').value,tf=$('tf').value,symbol=$('symbol').value.trim().toUpperCase(),limit=+$('limit').value;
+ if(!/^[A-Z0-9]{5,20}$/.test(symbol)){ $('status').textContent='Andika pair sahihi, mfano BTCUSDT.'; return; } $('symbol').value=symbol;
+ $('run').disabled=true;$('status').textContent='Inapakua data mahsusi za '+symbol+'...';
+ try{
+  const tfs=[...new Set([tf,'15m','1h','4h','1d'])];
+  const datasets=await Promise.all(tfs.map(async t=>({tf:t,k:await getKlines(symbol,t,Math.max(limit,250),market)})));
+  const analyses=datasets.map(d=>({tf:d.tf,a:calc(d.k)}));
+  const main=analyses.find(x=>x.tf===tf).a;
+  const alignedUp=analyses.filter(x=>x.a.bias==='UP').length;
+  const alignedDown=analyses.filter(x=>x.a.bias==='DOWN').length;
+  const consensus=Math.max(alignedUp,alignedDown);
+  // Require a strong local setup plus agreement across most selected timeframes.
+  if(main.score>=3 && alignedUp>=3 && main.atrPct<5) main.bias='UP';
+  else if(main.score<=-3 && alignedDown>=3 && main.atrPct<5) main.bias='DOWN';
+  else main.bias='NEUTRAL';
+  if(main.bias==='NEUTRAL')main.notes.push('Uamuzi umewekwa WAIT: local indicators na/au timeframe nyingi hazijatoa uthibitisho wa kutosha.');
+  else main.notes.push('Uthibitisho wa mwelekeo: '+consensus+'/'+analyses.length+' timeframes zinaunga mkono '+main.bias+'.');
+  render(main,market,tf,symbol,consensus);
+  renderSmartAnalysis(main,datasets.find(x=>x.tf===tf).k,consensus,analyses.length);
+  drawCandles(datasets.find(x=>x.tf===tf).k);
+  $('mtf').innerHTML=analyses.map(({tf:t,a})=>{let sg=a.bias==='UP'?(market==='spot'?'BUY':'LONG'):a.bias==='DOWN'?(market==='spot'?'EXIT':'SHORT'):'WAIT';return `<tr><td>${t}</td><td>${a.bias}</td><td>${fmt(a.rsi)}</td><td>${a.atrPct.toFixed(3)}%</td><td>${a.riskClass}</td><td>${sg}</td></tr>`}).join('');
+  $('status').textContent='Uchambuzi wa '+symbol+' umekamilika: '+new Date().toLocaleString();
+ }catch(e){$('status').textContent='Hitilafu: '+e.message}
+ finally{$('run').disabled=false}
+}
+
+// Binance official announcement categories: 48 = New Cryptocurrency Listing; 161 = Delisting.
+const BINANCE_ANNOUNCE_BASE='https://www.binance.com';
+let listingTimer=null, seenAnnouncementIds=new Set(), notificationEnabled=false, announcementsInitialized=false;
+function safeText(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function announcementLink(a){
+ const code=a.code||a.articleCode||a.id||'';
+ if(a.url && /^https:\/\//i.test(a.url)) return a.url;
+ return code?`${BINANCE_ANNOUNCE_BASE}/en/support/announcement/detail/${encodeURIComponent(code)}`:BINANCE_ANNOUNCE_BASE+'/en/support/announcement/';
+}
+function normalizeAnnouncements(json){
+ const d=json?.data||{};
+ let cats=Array.isArray(d.catalogs)?d.catalogs:[];
+ let articles=[];
+ for(const c of cats){articles.push(...(Array.isArray(c.articles)?c.articles:[]).map(a=>({...a,_catalogName:c.catalogName||''})));}
+ if(!articles.length && Array.isArray(d.articles)) articles=d.articles;
+ if(!articles.length && Array.isArray(d.items)) articles=d.items;
+ return articles.map(a=>({
+  id:String(a.code||a.id||a.articleId||a.title||Math.random()),
+  title:String(a.title||a.name||'Binance announcement'),
+  published:Number(a.releaseDate||a.publishTime||a.createdAt||a.timestamp||0),
+  url:announcementLink(a),
+  category:String(a._catalogName||a.categoryName||'Binance announcement')
+ })).sort((a,b)=>b.published-a.published);
+}
+async function fetchAnnouncementCategory(catalogId){
+ const params=new URLSearchParams({type:'1',pageNo:'1',pageSize:'20',catalogId:String(catalogId)});
+ const urls=[
+  `${BINANCE_ANNOUNCE_BASE}/bapi/apex/v1/public/apex/cms/article/list/query?${params}`,
+  `${BINANCE_ANNOUNCE_BASE}/bapi/composite/v1/public/cms/article/list/query?${params}`
+ ];
+ let lastError;
+ for(const url of urls){
+  try{
+   const r=await fetch(url,{headers:{'Accept':'application/json','lang':'en','clienttype':'web'},cache:'no-store'});
+   if(!r.ok)throw new Error('HTTP '+r.status);
+   const j=await r.json();
+   if(j.code && j.code!=='000000' && j.code!=='0') throw new Error(j.message||'Binance API error '+j.code);
+   const rows=normalizeAnnouncements(j);
+   if(rows.length) return rows;
+   // An empty category is valid, but try the second public endpoint before returning it.
+  }catch(e){lastError=e;}
+ }
+ if(lastError)throw lastError;
+ return [];
+}
+function detectAnnouncementType(title, isDelist){
+ const t=title.toLowerCase();
+ if(isDelist){
+  if(/trading pairs?|spot trading pairs?|margin trading pairs?/.test(t))return 'Trading pair removal';
+  if(/will delist|delist .*token|delisting .*token/.test(t))return 'Token delisting';
+  return 'Delisting notice';
+ }
+ if(/futures|perpetual|usdⓢ-m|coin-m/.test(t))return 'Futures contract';
+ if(/will list|new listing|list .*\([a-z0-9]{2,12}\)|adds .*trading pair|will add/.test(t))return 'New listing';
+ return 'Listing announcement';
+}
+function renderAnnouncementList(targetId, countId, items, isDelist){
+ const target=$(targetId);$(countId).textContent=String(items.length);
+ if(!items.length){target.innerHTML='<p class="muted">Hakuna tangazo lililopatikana kwenye ukurasa huu kwa sasa.</p>';return;}
+ target.innerHTML=items.slice(0,12).map(a=>{
+  const date=a.published?new Date(a.published).toLocaleString():'Muda haukutolewa';
+  const type=detectAnnouncementType(a.title,isDelist);
+  const fresh=announcementsInitialized && !seenAnnouncementIds.has(a.id);
+  const flag=isDelist?'dangerflag':'newflag';
+  return `<article class="announcement-card"><a href="${safeText(a.url)}" target="_blank" rel="noopener noreferrer">${safeText(a.title)}</a><div class="announcement-meta"><span class="${flag}">${safeText(type)}</span><span>${safeText(date)}</span>${fresh?'<span class="newflag">MPYA KWA APP</span>':''}</div></article>`;
+ }).join('');
+}
+async function refreshAnnouncements(silent=false){
+ const btn=$('refreshListings');if(btn)btn.disabled=true;
+ if(!silent)$('listingStatus').textContent='Inatafuta matangazo rasmi ya Binance...';
+ try{
+  const [news,removed]=await Promise.all([fetchAnnouncementCategory(48),fetchAnnouncementCategory(161)]);
+  const combined=[...news,...removed];
+  const newlySeen=combined.filter(a=>!seenAnnouncementIds.has(a.id));
+  renderAnnouncementList('newListings','newCount',news,false);
+  renderAnnouncementList('delistings','delistCount',removed,true);
+  if(seenAnnouncementIds.size && newlySeen.length && notificationEnabled && 'Notification' in window && Notification.permission==='granted'){
+   const n=newlySeen[0];new Notification('Binance: tangazo jipya',{body:n.title});
+  }
+  combined.forEach(a=>seenAnnouncementIds.add(a.id));
+  announcementsInitialized=true;
+  try{localStorage.setItem('binance_announcement_seen',JSON.stringify([...seenAnnouncementIds].slice(-300)));}catch(e){}
+  $('listingUpdated').textContent='Imesasishwa: '+new Date().toLocaleTimeString();
+  $('listingStatus').textContent=`Imepatikana: ${news.length} matangazo ya listings na ${removed.length} matangazo ya delistings. Chanzo: Binance.`;
+ }catch(e){
+  $('listingStatus').textContent='Imeshindikana kupata matangazo: '+e.message+'. Fungua tangazo rasmi la Binance kupitia kiungo hapa chini.';
+  $('newListings').innerHTML='<p class="muted">Data haijapatikana. Angalia Binance moja kwa moja.</p>';
+  $('delistings').innerHTML='<p class="muted">Data haijapatikana. Angalia Binance moja kwa moja.</p>';
+ }
+ finally{if(btn)btn.disabled=false;}
+}
+try{const old=JSON.parse(localStorage.getItem('binance_announcement_seen')||'[]');seenAnnouncementIds=new Set(old);}catch(e){}
+announcementsInitialized=seenAnnouncementIds.size>0;
+$('refreshListings').addEventListener('click',()=>refreshAnnouncements(false));
+$('notifyListings').addEventListener('click',async()=>{
+ if(!('Notification' in window)){$('listingStatus').textContent='Browser hii haitumii notification. App bado itaonyesha matangazo mapya ukiifungua.';return;}
+ const permission=await Notification.requestPermission();
+ notificationEnabled=permission==='granted';
+ $('notifyListings').textContent=notificationEnabled?'TAARIFA ZIMEWASHWA':'WASHA TAARIFA';
+ $('listingStatus').textContent=notificationEnabled?'Taarifa za browser zimewashwa wakati app iko wazi.':'Ruhusa ya taarifa haikukubaliwa.';
+});
+refreshAnnouncements(false);
+listingTimer=setInterval(()=>refreshAnnouncements(true),5*60*1000);
+
+['showAutoTrend','showSR','showFib','showManual'].forEach(id=>$(id).addEventListener('change',refreshDrawings));
+$('startDraw').addEventListener('click',()=>{drawActive=!drawActive;drawPoints=[];$('startDraw').textContent=drawActive?'ACHA KUCHORA':'ANZA KUCHORA';$('drawHelp').textContent=drawActive?($('drawMode').value==='trend'?'Gusa sehemu mbili kwenye chati kuchora trend line.':'Gusa chati sehemu ya bei ya Support/Resistance.'):'Uchoraji umesitishwa.';});
+$('undoDraw').addEventListener('click',()=>{manualLines.pop();drawManualLines();});
+$('clearDraw').addEventListener('click',()=>{manualLines=[];drawPoints=[];drawManualLines();drawActive=false;$('startDraw').textContent='ANZA KUCHORA';$('drawHelp').textContent='Mistari yako imefutwa.';});
+$('run').addEventListener('click',run);run();
+</script></body></html>
