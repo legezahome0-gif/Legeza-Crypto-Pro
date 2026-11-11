@@ -34,6 +34,8 @@ ul{padding-left:19px;margin-bottom:0}li{margin:7px 0;color:#cbd6e5}.warn{color:v
 .announcement-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .announcement-actions button{margin-top:0}
 #listingStatus{line-height:1.5}
+#smartAnalysis{border:2px solid #20c997;scroll-margin-top:12px;background:linear-gradient(145deg,#122b2b,#121d2e)}
+#smartAnalysis>b{display:block;color:#20c997;font-size:17px;margin-bottom:5px}
 @media(min-width:700px){.announcement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head><body>
 <header><img class="brand-logo" src="logo.png" alt="Legeza Crypto Pro logo"><h1>LEGEZA CRYPTO PRO</h1><div class="sub">Binance Spot + USDⓈ-M Futures • Uchambuzi wa soko • Zana ya elimu</div></header>
@@ -68,6 +70,7 @@ ul{padding-left:19px;margin-bottom:0}li{margin:7px 0;color:#cbd6e5}.warn{color:v
   <div><label for="limit">CANDLES</label><select id="limit"><option value="250">250</option><option value="300" selected>300</option><option value="500">500</option></select></div>
  </div>
  <button id="run">CHAMBUA SOKO SASA</button><p id="status" class="muted">Tayari. Chagua Spot au Futures kisha chambua.</p>
+<button id="jumpSmart" type="button" style="background:#176b55" onclick="document.getElementById('smartAnalysis').scrollIntoView({behavior:'smooth',block:'start'})">FUNGUA SMART MARKET ANALYSIS ↓</button>
 </section>
 <section class="panel">
  <div class="muted">LAST CLOSED CANDLE PRICE</div><div class="price" id="price">—</div><div class="muted" id="marketLabel">BTCUSDT • Spot</div>
@@ -101,6 +104,16 @@ ul{padding-left:19px;margin-bottom:0}li{margin:7px 0;color:#cbd6e5}.warn{color:v
  </div></section>
 <section class="panel"><b>MULTI-TIMEFRAME CONFIRMATION</b><p class="muted">Ulinganisho wa 15m, 1H, 4H na 1D. Signal ya muda mmoja si uthibitisho wa kutosha.</p>
 <table><thead><tr><th>TF</th><th>Trend</th><th>RSI</th><th>ATR / Bei</th><th>Risk</th><th>Signal</th></tr></thead><tbody id="mtf"><tr><td colspan="6">Bado hakuna data.</td></tr></tbody></table><p class="muted">Risk ni volatility inayopimwa kwa ATR/bei: chini ya 1% LOW; 1–2.49% MEDIUM; 2.5–4.99% HIGH; 5% au zaidi VERY HIGH. Hiki si kipimo kamili cha hatari ya trade.</p></section>
+<section class="panel" id="smartAnalysis"><b>SMART MARKET ANALYSIS</b><p class="muted">Uchambuzi wa kanuni za kiufundi kutoka Binance public data; si AI ya mazungumzo wala utabiri wa uhakika.</p>
+ <div class="metrics" style="margin-top:10px">
+  <div class="metric"><span>MARKET TREND</span><b id="smartTrend">—</b><span id="smartTrendNote">—</span></div>
+  <div class="metric"><span>MOMENTUM</span><b id="smartMomentum">—</b><span id="smartMomentumNote">—</span></div>
+  <div class="metric"><span>SUPPORT (karibu)</span><b id="smartSupport">—</b><span>Pivot low ya karibuni</span></div>
+  <div class="metric"><span>RESISTANCE (karibu)</span><b id="smartResistance">—</b><span>Pivot high ya karibuni</span></div>
+ </div>
+ <p id="smartSummary" class="muted" style="margin-top:12px">Bonyeza CHAMBUA SOKO SASA ili kupata muhtasari.</p>
+ <p class="warn">Levels za support/resistance ni pivots za candles zilizopita, si viwango vinavyohakikisha bei itageuka. Hakiki chart na usimamizi wa risk kabla ya uamuzi.</p>
+</section>
 <section class="panel"><b>REASONS / MARKET NOTES</b><ul id="reasons"><li>Bonyeza CHAMBUA SOKO SASA.</li></ul></section>
 <section class="panel"><b>CANDLESTICK CHART</b><p class="muted">Mishumaa ya bei ya Binance: kijani = candle imefunga juu ya open; nyekundu = imefunga chini. Gusa chart kuvuka bei na muda; zoom kwa vidole.</p><div class="chart-legend"><span><i class="dot" style="background:#26a69a"></i>Candles bullish</span><span><i class="dot" style="background:#ef5350"></i>Candles bearish</span><span><i class="dot" style="background:#69aaff"></i>EMA 20</span><span><i class="dot" style="background:#f5c451"></i>EMA 50</span><span><i class="dot" style="background:#b58cff"></i>EMA 200</span><span><i class="dot" style="background:#7e9bb8"></i>Bollinger Bands</span></div><div class="draw-tools">
  <label><input type="checkbox" id="showAutoTrend" checked> Automatic Trend Lines</label>
@@ -208,6 +221,19 @@ function drawManualLines(){manualSeries.forEach(x=>{try{candleChart.removeSeries
 function handleChartClick(param){if(!drawActive||!param||!param.point||!candleSeries)return;const price=candleSeries.coordinateToPrice(param.point.y),time=candleChart.timeScale().coordinateToTime(param.point.x);if(price==null||time==null)return;const mode=$('drawMode').value;if(mode==='horizontal'){manualLines.push({kind:'horizontal',points:[{time,value:price},{time:latestKlines[latestKlines.length-1].t/1000,value:price}]});drawManualLines();drawActive=false;$('startDraw').textContent='ANZA KUCHORA';$('drawHelp').textContent='Mstari wa usawa umeongezwa. Unaweza kuanza kuchora mwingine.';return;}drawPoints.push({time,value:price});$('drawHelp').textContent=drawPoints.length===1?'Sasa gusa sehemu ya pili ya trend line.':'Trend line imechorwa.';if(drawPoints.length===2){manualLines.push({kind:'trend',points:drawPoints.slice().sort((a,b)=>a.time-b.time)});drawPoints=[];drawManualLines();drawActive=false;$('startDraw').textContent='ANZA KUCHORA';}}
 function refreshDrawings(){if(latestKlines.length)drawAutomaticLevels(latestKlines);drawManualLines();}
 
+function renderSmartAnalysis(a,k,consensus,total){
+ const closed=k.slice(0,-1),recent=closed.slice(-150),lows=findPivots(recent,'low').map(x=>x.price),highs=findPivots(recent,'high').map(x=>x.price);
+ const supports=lows.filter(x=>x<a.last).sort((x,y)=>y-x),resists=highs.filter(x=>x>a.last).sort((x,y)=>x-y);
+ $('smartTrend').textContent=a.bias==='UP'?'BULLISH':a.bias==='DOWN'?'BEARISH':'SIDEWAYS / MIXED';
+ $('smartTrendNote').textContent='EMA20 '+(a.e20>a.e50?'juu':'chini')+' ya EMA50; bei '+(a.last>a.e200?'juu':'chini')+' ya EMA200';
+ $('smartMomentum').textContent=a.macd>a.ms?'POSITIVE':'NEGATIVE';
+ $('smartMomentumNote').textContent='RSI '+fmt(a.rsi)+' • MACD '+(a.macd>a.ms?'juu':'chini')+' ya signal';
+ $('smartSupport').textContent=supports.length?fmt(supports[0]):'Haijapatikana';
+ $('smartResistance').textContent=resists.length?fmt(resists[0]):'Haijapatikana';
+ let conclusion=a.bias==='UP'?'Mwelekeo wa sasa unaegemea kupanda':a.bias==='DOWN'?'Mwelekeo wa sasa unaegemea kushuka':'Viashiria havijakubaliana vya kutosha';
+ let risk=a.riskClass==='VERY HIGH'?'Volatility ni VERY HIGH; epuka leverage kubwa.':a.riskClass==='HIGH'?'Volatility iko HIGH; punguza ukubwa wa position.':'Volatility ni '+a.riskClass+' kwa kipimo cha ATR/bei.';
+ $('smartSummary').textContent=conclusion+'. Uthibitisho wa timeframes: '+consensus+'/'+total+'. '+risk+' '+(a.bias==='NEUTRAL'?'Kwa sasa WAIT ndiyo msimamo wa tahadhari.':'Usiingie bila kusubiri candle ifunge na kuthibitisha levels za entry/SL.');
+}
 function setSignal(a,market){let sig='WAIT',cls='wait',desc='Ushahidi wa token hii haujatosha au timeframes hazijakubaliana.';
  if(a.bias==='UP'){sig=market==='spot'?'BUY':'LONG';cls=market==='spot'?'buy':'long';desc='Bias ya kupanda: subiri confirmation ya timeframe kubwa na risk plan.'}
  if(a.bias==='DOWN'){sig=market==='spot'?'EXIT / AVOID':'SHORT';cls=market==='spot'?'sell':'short';desc=market==='spot'?'Bias ya kushuka: epuka kununua au tathmini exit. Spot haitoi short.':'Bias ya kushuka: subiri confirmation kabla ya short.'}
@@ -244,6 +270,7 @@ async function run(){
   if(main.bias==='NEUTRAL')main.notes.push('Uamuzi umewekwa WAIT: local indicators na/au timeframe nyingi hazijatoa uthibitisho wa kutosha.');
   else main.notes.push('Uthibitisho wa mwelekeo: '+consensus+'/'+analyses.length+' timeframes zinaunga mkono '+main.bias+'.');
   render(main,market,tf,symbol,consensus);
+  renderSmartAnalysis(main,datasets.find(x=>x.tf===tf).k,consensus,analyses.length);
   drawCandles(datasets.find(x=>x.tf===tf).k);
   $('mtf').innerHTML=analyses.map(({tf:t,a})=>{let sg=a.bias==='UP'?(market==='spot'?'BUY':'LONG'):a.bias==='DOWN'?(market==='spot'?'EXIT':'SHORT'):'WAIT';return `<tr><td>${t}</td><td>${a.bias}</td><td>${fmt(a.rsi)}</td><td>${a.atrPct.toFixed(3)}%</td><td>${a.riskClass}</td><td>${sg}</td></tr>`}).join('');
   $('status').textContent='Uchambuzi wa '+symbol+' umekamilika: '+new Date().toLocaleString();
