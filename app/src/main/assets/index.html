@@ -243,6 +243,19 @@ function render(a,market,tf,symbol,mtfAgreement){
  if(direction===0){['entry','sl','tp1','tp2','tp3','risk'].forEach(id=>$(id).textContent='—')}
  else{$('entry').textContent=fmt(entry);$('sl').textContent=fmt(entry-direction*dist);$('tp1').textContent=fmt(entry+direction*dist);$('tp2').textContent=fmt(entry+direction*dist*2);$('tp3').textContent=fmt(entry+direction*dist*3);$('risk').textContent=fmt(dist)+' USDT ('+fmt(dist/entry*100)+'%)'}
  $('reasons').innerHTML=a.notes.map(x=>'<li>'+x+'</li>').join('');
+$('smartTrend').textContent = a.bias;
+$('smartRSI').textContent = Number(a.rsi).toFixed(2);
+$('smartMACD').textContent = a.macd > a.ms ? 'BULLISH' : 'BEARISH';
+
+const recent = a.closes.slice(-20);
+$('smartSupport').textContent = Math.min(...recent).toFixed(4);
+$('smartResistance').textContent = Math.max(...recent).toFixed(4);
+
+$('smartSummary').textContent =
+  'Trend: ' + a.bias +
+  ' | RSI: ' + Number(a.rsi).toFixed(2) +
+  ' | Risk: ' + a.riskClass +
+  ' | Timeframe confirmation: ' + mtfAgreement + '/4';
 }
 async function run(){
  let market=$('market').value,tf=$('tf').value,symbol=$('symbol').value.trim().toUpperCase(),limit=+$('limit').value;
