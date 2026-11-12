@@ -1,8 +1,7 @@
 <!doctype html>
 <html lang="sw"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b1220"><meta name="application-name" content="Legeza Crypto Pro"><title>Legeza Crypto Pro</title><link rel="icon" type="image/png" href="logo.png">
-<script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+<meta name="theme-color" content="#0b1220"><meta name="application-name" content="Legeza Crypto Pro"><title>Legeza Cry
 <style>
 :root{--bg:#0b1220;--p:#121d2e;--p2:#19283d;--line:#2a3a51;--txt:#eaf0f8;--muted:#9aabc1;--green:#20c997;--red:#ff667d;--yellow:#f5c451;--blue:#69aaff}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(150deg,#09111e,#111d30);color:var(--txt);font:15px system-ui,Segoe UI,Roboto,sans-serif}
@@ -18,8 +17,7 @@ button{background:#2867bd;border:0;font-weight:750;margin-top:10px}button:disabl
 table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:9px 5px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-weight:500}
 ul{padding-left:19px;margin-bottom:0}li{margin:7px 0;color:#cbd6e5}.warn{color:var(--yellow);font-size:12px;line-height:1.5}.tag{display:inline-block;border-radius:20px;padding:4px 8px;background:#26364c;color:var(--muted);font-size:11px}
 #candleChart{width:100%;height:390px;background:#0d1726;border-radius:9px;overflow:hidden}.countdown-box{display:flex;flex-direction:column;gap:3px;background:#19283d;border:1px solid #2a3a51;border-radius:10px;padding:10px 12px;margin:10px 0}.countdown-box b{font-size:25px;letter-spacing:1px;color:#f5c451;font-variant-numeric:tabular-nums}.chart-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:8px 0}.chart-legend span{white-space:nowrap}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
-@media(min-width:700px){.fields{grid-template-columns:repeat(4,minmax(0,1fr))}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.levels{grid-template-columns:repeat(4,minmax(0,1fr))}}
-
+@media(min-width:700px){.fields{grid-template-columns:repeat(4,minmax(0,1fr))}.grid{grid-template-columns:repeat(4,min
 .draw-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.draw-tools label{display:flex;align-items:center;gap:7px;background:var(--p2);padding:9px;border-radius:9px;margin:0;color:var(--txt)}.draw-tools input{accent-color:#69aaff}.draw-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.draw-actions button{margin-top:0}.draw-actions select{min-width:0}
 .announcement-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .announcement-card{background:var(--p2);border:1px solid var(--line);border-radius:11px;padding:11px;margin:8px 0}
@@ -102,6 +100,18 @@ ul{padding-left:19px;margin-bottom:0}li{margin:7px 0;color:#cbd6e5}.warn{color:v
  <div class="metric"><span>Volume vs avg 20</span><b id="volume">—</b><span id="volHint">—</span></div>
  <div class="metric"><span>Trend</span><b id="trend">—</b><span>EMA 20/50/200</span></div><div class="metric"><span>ATR / Bei</span><b id="atrPct">—</b><span id="riskClass">Volatility ya token</span></div>
  </div></section>
+  <section class="panel" id="smartAnalysis">
+<b>SMART MARKET ANALYSIS</b>
+<p class="muted">Uchambuzi wa mwenendo wa soko kwa kutumia Binance public data.</p>
+<div class="metrics" style="margin-top:10px">
+  <div class="metric"><span>MARKET TREND</span><b id="smartTrend">—</b><span id="smartTrendNote">—</span></div>
+  <div class="metric"><span>MOMENTUM</span><b id="smartMomentum">—</b><span id="smartMomentumNote">—</span></div>
+  <div class="metric"><span>SUPPORT (karibu)</span><b id="smartSupport">—</b><span>Pivot low ya karibuni</span></div>
+  <div class="metric"><span>RESISTANCE (karibu)</span><b id="smartResistance">—</b><span>Pivot high ya karibuni</span></div>
+</div>
+<p id="smartSummary" class="muted">Subiri uchambuzi wa soko.</p>
+<p class="warn">Uchambuzi huu si uhakika wa faida. Tumia risk management.</p>
+</section>                      
 <section class="panel"><b>MULTI-TIMEFRAME CONFIRMATION</b><p class="muted">Ulinganisho wa 15m, 1H, 4H na 1D. Signal ya muda mmoja si uthibitisho wa kutosha.</p>
 <table><thead><tr><th>TF</th><th>Trend</th><th>RSI</th><th>ATR / Bei</th><th>Risk</th><th>Signal</th></tr></thead><tbody id="mtf"><tr><td colspan="6">Bado hakuna data.</td></tr></tbody></table><p class="muted">Risk ni volatility inayopimwa kwa ATR/bei: chini ya 1% LOW; 1–2.49% MEDIUM; 2.5–4.99% HIGH; 5% au zaidi VERY HIGH. Hiki si kipimo kamili cha hatari ya trade.</p></section>
 <section class="panel" id="smartAnalysis"><b>SMART MARKET ANALYSIS</b><p class="muted">Uchambuzi wa kanuni za kiufundi kutoka Binance public data; si AI ya mazungumzo wala utabiri wa uhakika.</p>
