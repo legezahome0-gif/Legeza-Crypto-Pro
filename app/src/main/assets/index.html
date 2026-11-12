@@ -251,14 +251,15 @@ function refreshDrawings(){if(latestKlines.length)drawAutomaticLevels(latestKlin
  $('signal').textContent=sig;
  $('signal').className='signal '+cls;
  $('signalDesc').textContent=desc;
+return sig;
 }
 function render(a,market,tf,symbol,mtfAgreement){
  $('price').textContent=fmt(a.last)+' USDT';$('marketLabel').textContent=symbol+' • '+(market==='spot'?'Binance Spot':'Binance USDⓈ-M Futures')+' • '+tf;
- setSignal(a,market,mtfAgreement);let c=Math.round((Math.abs(a.score)/4)*100);$('conf').textContent=c+'%';$('confBar').style.width=c+'%';$('quality').textContent='Ubora wa setup: '+(a.bias==='NEUTRAL'?'HAITOSHI':(mtfAgreement>=3?'NZURI — timeframe zimekubaliana':mtfAgreement===2?'WASTANI — thibitisha zaidi':'DHAIFU — subiri'))+' • Mwelekeo '+mtfAgreement+'/4 timeframes';
+ const finalSignal=setSignal(a,market,mtfAgreement);let c=Math.round((Math.abs(a.score)/4)*100);$('conf').textContent=c+'%';$('confBar').style.width=c+'%';$('quality').textContent='Ubora wa setup: '+(a.bias==='NEUTRAL'?'HAITOSHI':(mtfAgreement>=3?'NZURI — timeframe zimekubaliana':mtfAgreement===2?'WASTANI — thibitisha zaidi':'DHAIFU — subiri'))+' • Mwelekeo '+mtfAgreement+'/4 timeframes';
  $('rsi').textContent=fmt(a.rsi);$('rsiHint').textContent=a.rsi>=70?'Overbought':a.rsi<=30?'Oversold':'Neutral';$('macd').textContent=fmt(a.macd)+' / '+fmt(a.ms);$('macdHint').textContent=a.macd>a.ms?'Bullish momentum':'Bearish momentum';
  $('ema').textContent=fmt(a.e20)+' / '+fmt(a.e50);$('emaHint').textContent=a.e20>a.e50?'EMA20 > EMA50':'EMA20 < EMA50';$('ema200').textContent=fmt(a.e200);$('ema200Hint').textContent=a.last>a.e200?'Price above EMA200':'Price below EMA200';
  $('bb').textContent=fmt(a.lo)+' / '+fmt(a.hi);$('bbHint').textContent=a.last>a.hi?'Above upper band':a.last<a.lo?'Below lower band':'Inside bands';$('atr').textContent=fmt(a.atr);$('atrPct').textContent=fmt(a.atrPct)+'%';$('riskClass').textContent='Volatility: '+a.riskClass;$('volume').textContent=fmt(a.vol);$('volHint').textContent=fmt(a.vr)+'× avg 20';$('trend').textContent=a.bias;
- let direction= a.bias==='UP'?1:(a.bias==='DOWN'&&market==='futures'?-1:0),entry=a.last,dist=a.atr*1.5;
+ let direction=(finalSignal==='BUY'||finalSignal==='LONG')?1:(finalSignal==='SHORT'?-1:0),entry=a.last,dist=a.atr*1.5;
  $('directionNote').textContent=direction===0?(market==='spot'&&a.bias==='DOWN'?'EXIT / AVOID: Spot haitoi SHORT; viwango vya SHORT vimefichwa.':'WAIT: hakuna Entry/SL/TP inayopendekezwa mpaka signal iwe na mwelekeo.'):'Levels za mfano kwa '+(direction>0?(market==='spot'?'BUY':'LONG'):'SHORT')+'; ATR × 1.5.';
  if(direction===0){['entry','sl','tp1','tp2','tp3','risk'].forEach(id=>$(id).textContent='—')}
  else{$('entry').textContent=fmt(entry);$('sl').textContent=fmt(entry-direction*dist);$('tp1').textContent=fmt(entry+direction*dist);$('tp2').textContent=fmt(entry+direction*dist*2);$('tp3').textContent=fmt(entry+direction*dist*3);$('risk').textContent=fmt(dist)+' USDT ('+fmt(dist/entry*100)+'%)'}
