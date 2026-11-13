@@ -145,6 +145,20 @@ Resistance: <b id="smartResistance">—</b>
 <footer class="muted" style="text-align:center;padding:10px">PRO Crypto Analyzer • Candlestick + Binance public market data + Listing/Delisting Monitor • v7.0 Candle Countdown + Multi-Timeframe Risk</footer>
 </main>
 <script>
+ window.addEventListener('error', function(e) {
+  const el = document.getElementById('status');
+  if (el) {
+    el.textContent = 'JAVASCRIPT ERROR: ' + e.message +
+      ' | Line: ' + e.lineno;
+  }
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+  const el = document.getElementById('status');
+  if (el) {
+    el.textContent = 'PROMISE ERROR: ' + e.reason;
+  }
+});
 const $=x=>document.getElementById(x), fmt=n=>Number.isFinite(n)?n.toLocaleString('en-US',{maximumFractionDigits:n>100?2:6}):'—';
 const avg=a=>a.reduce((s,v)=>s+v,0)/a.length;
 function EMA(a,p){let o=Array(a.length).fill(null);if(a.length<p)return o;let v=avg(a.slice(0,p)),k=2/(p+1);o[p-1]=v;for(let i=p;i<a.length;i++){v=a[i]*k+v*(1-k);o[i]=v}return o}
