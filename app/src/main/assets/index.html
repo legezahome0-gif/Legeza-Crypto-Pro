@@ -227,7 +227,7 @@ function drawManualLines(){manualSeries.forEach(x=>{try{candleChart.removeSeries
 function handleChartClick(param){if(!drawActive||!param||!param.point||!candleSeries)return;const price=candleSeries.coordinateToPrice(param.point.y),time=candleChart.timeScale().coordinateToTime(param.point.x);if(price==null||time==null)return;const mode=$('drawMode').value;if(mode==='horizontal'){manualLines.push({kind:'horizontal',points:[{time,value:price},{time:latestKlines[latestKlines.length-1].t/1000,value:price}]});drawManualLines();drawActive=false;$('startDraw').textContent='ANZA KUCHORA';$('drawHelp').textContent='Mstari wa usawa umeongezwa. Unaweza kuanza kuchora mwingine.';return;}drawPoints.push({time,value:price});$('drawHelp').textContent=drawPoints.length===1?'Sasa gusa sehemu ya pili ya trend line.':'Trend line imechorwa.';if(drawPoints.length===2){manualLines.push({kind:'trend',points:drawPoints.slice().sort((a,b)=>a.time-b.time)});drawPoints=[];drawManualLines();drawActive=false;$('startDraw').textContent='ANZA KUCHORA';}}
 function refreshDrawings(){if(latestKlines.length)drawAutomaticLevels(latestKlines);drawManualLines();}
 
-}function setSignal(a,market,mtfAgreement){
+function setSignal(a,market,mtfAgreement){
  let sig='WAIT',cls='wait';
  let desc='Subiri: ushahidi wa soko haujatosha.';
 
