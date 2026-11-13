@@ -145,6 +145,19 @@ Resistance: <b id="smartResistance">—</b>
 <footer class="muted" style="text-align:center;padding:10px">PRO Crypto Analyzer • Candlestick + Binance public market data + Listing/Delisting Monitor • v7.0 Candle Countdown + Multi-Timeframe Risk</footer>
 </main>
 <script>
+window.addEventListener("error", function(e) {
+  alert(
+    "JAVASCRIPT ERROR: " + e.message +
+    "\nLine: " + e.lineno
+  );
+});
+
+window.addEventListener("unhandledrejection", function(e) {
+  alert(
+    "PROMISE ERROR: " + e.reason
+  );
+});
+ 
  window.addEventListener('error', function(e) {
   const el = document.getElementById('status');
   if (el) {
