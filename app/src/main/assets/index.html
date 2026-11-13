@@ -151,6 +151,15 @@ window.addEventListener("error", function(e) {
     "\nLine: " + e.lineno
   );
 });
+document.addEventListener("click", function(e) {
+  alert(
+    "CLICK IMEPATIKANA! Element: " +
+    e.target.tagName +
+    " ID: " +
+    (e.target.id || "HAKUNA ID")
+  );
+}, true);
+
 
 window.addEventListener("unhandledrejection", function(e) {
   alert(
